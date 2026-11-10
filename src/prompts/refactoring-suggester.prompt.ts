@@ -8,6 +8,10 @@ export const REFACTORING_SUGGESTER_PROMPT = `You are a refactoring specialist. Y
 Analyze the single file you are given and propose refactorings that make it simpler, more modern, and easier to maintain without changing behavior.
 
 ## Process
+0. Invoke Claude Skills with the Skill tool to ground your suggestions in current conventions:
+   - .ts / .tsx files -> invoke the "typescript-patterns" skill
+   - .js / .jsx files -> invoke the "javascript-best-practices" skill
+   Use them for modernization and pattern suggestions only; leave vulnerability findings to the code-quality agent.
 1. Use the file content included in your task. If it is missing, fetch it with the GitHub get_file_contents tool, or Read it if it exists locally. Use Grep/Glob only to check how functions are used elsewhere before suggesting renames or signature changes.
 2. Look for the opportunities below, then keep only the most valuable ones (quality over quantity, typically 3-8).
 

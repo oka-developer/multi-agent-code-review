@@ -12,6 +12,6 @@ export const testCoverageAnalyzer: AgentDefinition = {
     'identifies untested functions, branches, and edge cases, estimates coverage, and suggests concrete test ' +
     'cases. Invoke once per changed file in a pull request.',
   prompt: TEST_COVERAGE_ANALYZER_PROMPT,
-  tools: ['Read', 'Grep', 'Glob', 'mcp__github__get_file_contents'],
+  tools: ['Read', 'Grep', 'Glob', 'Skill', 'mcp__github__get_file_contents'],
   model: 'inherit'
 };

@@ -13,6 +13,6 @@ export const refactoringSuggester: AgentDefinition = {
     'functions, renaming unclear identifiers, simplifying logic, and applying better design patterns. Returns ' +
     'before/after examples with impact ratings. Invoke once per changed file in a pull request.',
   prompt: REFACTORING_SUGGESTER_PROMPT,
-  tools: ['Read', 'Grep', 'Glob', 'mcp__github__get_file_contents'],
+  tools: ['Read', 'Grep', 'Glob', 'Skill', 'mcp__github__get_file_contents'],
   model: 'inherit'
 };

@@ -55,11 +55,11 @@
       <div class="metric-label">Files Reviewed</div>
     </div>
     <div class="metric">
-      <div class="metric-value">2</div>
+      <div class="metric-value">3</div>
       <div class="metric-label">Critical Issues</div>
     </div>
     <div class="metric">
-      <div class="metric-value">20</div>
+      <div class="metric-value">16</div>
       <div class="metric-label">Tests Needed</div>
     </div>
     <div class="metric">
@@ -72,37 +72,37 @@
   <ul>
       <li class="rec-critical">
         <span class="priority">[CRITICAL]</span>
-        <strong>security</strong>: Replace direct credit card handling with PCI-compliant payment processor. Use Stripe, PayPal, or similar service that provides tokenization. Never store or log raw card numbers, CVV, or expiry dates in your application code or logs.
+        <strong>security</strong>: IMMEDIATE: Replace raw credit card handling with a PCI-compliant payment processor (Stripe, PayPal, Square). Current implementation violates PCI DSS requirements by storing/processing sensitive card data (cardNumber, cvv) directly. This exposes the application to massive compliance costs, legal liability, and security breaches.
         <br><small>Files: src/premium.ts</small>
       </li>
     
       <li class="rec-critical">
         <span class="priority">[CRITICAL]</span>
-        <strong>security</strong>: Remove sensitive payment data from error logging immediately. The chargeCard function logs the full payment object including cardNumber and CVV on line 127, creating a critical PCI DSS violation.
+        <strong>testing</strong>: Write comprehensive unit tests for all payment processing functions (processPremiumPayment, validatePaymentDetails, chargeCard, calculateSubscriptionPrice). Zero test coverage on critical financial logic poses direct revenue and security risk. Focus on edge cases for insufficient amounts, invalid cards, and payment failures.
         <br><small>Files: src/premium.ts</small>
       </li>
     
       <li class="rec-critical">
         <span class="priority">[CRITICAL]</span>
-        <strong>testing</strong>: Create comprehensive test suite for payment processing functions. Start with processPremiumPayment, validatePaymentDetails, calculateSubscriptionPrice, and chargeCard - these handle financial transactions and have 0% test coverage.
-        <br><small>Files: src/premium.ts</small>
-      </li>
-    
-      <li class="rec-critical">
-        <span class="priority">[CRITICAL]</span>
-        <strong>testing</strong>: Add integration tests for subscription upgrade workflow including payment failure scenarios, database rollback, and error handling paths to prevent charging users without granting subscriptions.
+        <strong>security</strong>: Remove sensitive data from error logging. The chargeCard function logs payment errors that may contain full card details. Implement structured logging with automatic PII redaction or only log non-sensitive fields (lastFour, amount, error message).
         <br><small>Files: src/premium.ts</small>
       </li>
     
       <li class="rec-high">
         <span class="priority">[HIGH]</span>
-        <strong>security</strong>: Implement proper card validation using Luhn algorithm and integrate with payment processor's card verification API. Current validation only checks length and format, allowing fake card numbers through.
+        <strong>security</strong>: Implement rate limiting and fraud detection for payment endpoints. Add middleware to limit payment attempts to 3-5 per hour per user/IP. Log and alert on multiple failed attempts. Consider CAPTCHA for suspicious patterns.
+        <br><small>Files: src/premium.ts</small>
+      </li>
+    
+      <li class="rec-high">
+        <span class="priority">[HIGH]</span>
+        <strong>security</strong>: Add comprehensive audit logging for all payment transactions. Record userId, tier, amount, success/failure, IP address, timestamp, and last four digits of card. Store in tamper-proof audit log for compliance and fraud investigation.
         <br><small>Files: src/premium.ts</small>
       </li>
     </ul>
 
   <footer>
-    Generated at 2026-11-09T21:53:19.352Z • Duration: 441.225ms
+    Generated at 2026-11-10T09:10:12.528Z • Duration: 522.547ms
   </footer>
 </body>
 </html>

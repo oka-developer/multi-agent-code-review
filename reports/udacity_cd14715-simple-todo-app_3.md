@@ -6,25 +6,25 @@
 |--------|-------|
 | **Overall Score** | 15/100 |
 | **Files Reviewed** | 1 |
-| **Critical Issues** | 2 |
-| **High Priority Tests** | 20 |
+| **Critical Issues** | 3 |
+| **High Priority Tests** | 16 |
 | **Refactoring Opportunities** | 8 |
 
 ## 🎯 Top Recommendations
 
-1. 🚨 **security**: Replace direct credit card handling with PCI-compliant payment processor. Use Stripe, PayPal, or similar service that provides tokenization. Never store or log raw card numbers, CVV, or expiry dates in your application code or logs.
+1. 🚨 **security**: IMMEDIATE: Replace raw credit card handling with a PCI-compliant payment processor (Stripe, PayPal, Square). Current implementation violates PCI DSS requirements by storing/processing sensitive card data (cardNumber, cvv) directly. This exposes the application to massive compliance costs, legal liability, and security breaches.
    - Files: src/premium.ts
 
-2. 🚨 **security**: Remove sensitive payment data from error logging immediately. The chargeCard function logs the full payment object including cardNumber and CVV on line 127, creating a critical PCI DSS violation.
+2. 🚨 **testing**: Write comprehensive unit tests for all payment processing functions (processPremiumPayment, validatePaymentDetails, chargeCard, calculateSubscriptionPrice). Zero test coverage on critical financial logic poses direct revenue and security risk. Focus on edge cases for insufficient amounts, invalid cards, and payment failures.
    - Files: src/premium.ts
 
-3. 🚨 **testing**: Create comprehensive test suite for payment processing functions. Start with processPremiumPayment, validatePaymentDetails, calculateSubscriptionPrice, and chargeCard - these handle financial transactions and have 0% test coverage.
+3. 🚨 **security**: Remove sensitive data from error logging. The chargeCard function logs payment errors that may contain full card details. Implement structured logging with automatic PII redaction or only log non-sensitive fields (lastFour, amount, error message).
    - Files: src/premium.ts
 
-4. 🚨 **testing**: Add integration tests for subscription upgrade workflow including payment failure scenarios, database rollback, and error handling paths to prevent charging users without granting subscriptions.
+4. ⚠️ **security**: Implement rate limiting and fraud detection for payment endpoints. Add middleware to limit payment attempts to 3-5 per hour per user/IP. Log and alert on multiple failed attempts. Consider CAPTCHA for suspicious patterns.
    - Files: src/premium.ts
 
-5. ⚠️ **security**: Implement proper card validation using Luhn algorithm and integrate with payment processor's card verification API. Current validation only checks length and format, allowing fake card numbers through.
+5. ⚠️ **security**: Add comprehensive audit logging for all payment transactions. Record userId, tier, amount, success/failure, IP address, timestamp, and last four digits of card. Store in tamper-proof audit log for compliance and fraud investigation.
    - Files: src/premium.ts
 
 ## 📁 File Details
@@ -33,25 +33,25 @@
 
 **Quality Score:** 15/100 | **Coverage:** ~0%
 
-#### Issues (16)
-  - Line 18: `critical` Payment card details (cardNumber, CVV) are stored in plain text in the PaymentDetails interface and passed through the system unencrypted. This violates PCI DSS compliance requirements and exposes sensitive financial data. If logged, transmitted over non-HTTPS, or stored anywhere, this creates a critical data breach risk.
-  - Line 119: `critical` The chargeCard function logs the full payment object to console on error (line 127), which includes the unencrypted cardNumber, CVV, and expiryDate. This exposes sensitive payment card information in application logs, violating PCI DSS and creating a critical security vulnerability.
-  - Line 64: `high` Card validation is performed client-side only with basic length and format checks. There is no Luhn algorithm check for card number validity, no real-time fraud detection, and no verification with the card issuer. An attacker could submit fake card numbers that pass these weak validations.
+#### Issues (18)
+  - Line 17: `critical` PaymentDetails interface stores sensitive payment card data (cardNumber, cvv) in plain text. This violates PCI DSS compliance requirements. If this data is logged, stored in memory dumps, or transmitted without encryption, it creates a critical security vulnerability.
+  - Line 30: `critical` The processPremiumPayment function accepts and processes raw credit card details (cardNumber, cvv, expiryDate) directly. This makes your application subject to PCI DSS Level 1 compliance requirements, which is extremely costly and complex. Any logging, error handling, or data breach could expose this sensitive data.
+  - Line 119: `critical` The chargeCard function logs payment errors to console.error, which may include the full payment object containing cardNumber, cvv, and other sensitive PCI data. This violates PCI DSS requirement 3.2 (never store sensitive authentication data after authorization).
 
-  *...and 13 more*
+  *...and 15 more*
 
-#### Test Gaps (22)
-  - `processPremiumPayment (line 28)` (critical priority)
-  - `processPremiumPayment (line 28)` (critical priority)
+#### Test Gaps (21)
+  - `processPremiumPayment (lines 28-58)` (critical priority)
+  - `processPremiumPayment insufficient amount (line 44)` (critical priority)
 
-  *...and 20 more*
+  *...and 19 more*
 
 #### Refactoring Opportunities (8)
-  - **extract-function**: Extract expiry date validation into a separate function. Currently, expiry validation logic (regex, parsing, and comparison) is embedded in a longer validation function, making it harder to test and reuse.
-  - **simplify**: Replace multiple early-return conditionals with a single compound boolean expression. The function currently has 4 separate if-return blocks that can be combined for better readability.
+  - **pattern-improvement**: Extract pricing configuration into a structured pricing strategy with constants at module level. Current implementation hardcodes pricing logic inside the function, making it hard to test, modify, or extend with new tiers.
+  - **extract-function**: Break down monolithic validation function into separate, focused validators. Current 29-line function does four distinct validations, making it hard to test individual rules and understand failure reasons.
 
   *...and 6 more*
 
 ---
 
-*Generated at 2026-11-09T21:53:19.352Z • Duration: 441.225ms*
+*Generated at 2026-11-10T09:10:12.528Z • Duration: 522.547ms*

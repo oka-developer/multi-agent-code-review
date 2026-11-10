@@ -40,10 +40,10 @@ npm run dev -- octocat Hello-World 1
 | Agent | Looks for | Tools (least privilege) |
 |---|---|---|
 | `code-quality-analyzer` | Security issues, performance problems, bug risks, maintainability | `Read`, `Grep`, `Glob`, `Skill`, GitHub file contents, ESLint MCP |
-| `test-coverage-analyzer` | Related test files, untested functions/branches/edge cases, concrete test suggestions (estimates coverage without running tests) | `Read`, `Grep`, `Glob`, GitHub file contents |
-| `refactoring-suggester` | Extract-function, rename, modernize, simplify, design-pattern improvements, with before/after code | `Read`, `Grep`, `Glob`, GitHub file contents |
+| `test-coverage-analyzer` | Related test files, untested functions/branches/edge cases, concrete test suggestions (estimates coverage without running tests) | `Read`, `Grep`, `Glob`, `Skill`, GitHub file contents |
+| `refactoring-suggester` | Extract-function, rename, modernize, simplify, design-pattern improvements, with before/after code | `Read`, `Grep`, `Glob`, `Skill`, GitHub file contents |
 
-The code-quality agent invokes Claude Skills from `.claude/skills/` by file type: `typescript-patterns` for `.ts/.tsx`, `javascript-best-practices` for `.js/.jsx`, and `security-analysis` for every file.
+All three agents have the `Skill` tool and invoke Claude Skills from `.claude/skills/` by file type: `typescript-patterns` for `.ts/.tsx` and `javascript-best-practices` for `.js/.jsx`. The code-quality agent also invokes `security-analysis` for every file, and the test-coverage agent uses it to rank security-sensitive untested paths.
 
 ### MCP servers
 

@@ -8,6 +8,10 @@ export const TEST_COVERAGE_ANALYZER_PROMPT = `You are a test engineering special
 For the single source file you are given, find its tests, identify what is not covered, and propose specific test cases.
 
 ## Process
+0. Invoke Claude Skills with the Skill tool when they help you judge what needs testing:
+   - .ts / .tsx files -> "typescript-patterns" (typing pitfalls worth asserting on)
+   - .js / .jsx files -> "javascript-best-practices" (common pitfalls worth asserting on)
+   - code touching user input, auth, payments, or secrets -> "security-analysis" (to rank security-sensitive untested paths as critical/high)
 1. Read the source file and list its exported functions, classes, branches (if/else, switch, try/catch), and edge cases (empty input, null, boundaries, errors).
 2. Locate tests with Glob and Grep, using common conventions:
    - same-name files: foo.ts -> foo.test.ts, foo.spec.ts, __tests__/foo.test.ts, tests/foo.test.ts

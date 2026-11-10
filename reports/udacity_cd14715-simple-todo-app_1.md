@@ -4,54 +4,54 @@
 
 | Metric | Value |
 |--------|-------|
-| **Overall Score** | 82/100 |
+| **Overall Score** | 78/100 |
 | **Files Reviewed** | 1 |
 | **Critical Issues** | 0 |
-| **High Priority Tests** | 8 |
-| **Refactoring Opportunities** | 6 |
+| **High Priority Tests** | 9 |
+| **Refactoring Opportunities** | 5 |
 
 ## 🎯 Top Recommendations
 
-1. 🚨 **testing**: Add comprehensive unit tests for the sanitizeInput function to verify XSS prevention. This function has zero test coverage and is critical for security.
+1. 🚨 **testing**: Add comprehensive test suite for security-critical functions sanitizeInput and createUser to verify XSS prevention and input validation works correctly across all edge cases.
    - Files: fixtures/clean-code.ts
 
-2. ⚠️ **security**: Replace Math.random() with crypto.randomUUID() in generateId() to prevent ID enumeration attacks and ensure cryptographically secure random generation.
+2. ⚠️ **security**: Replace incomplete XSS sanitization with a well-tested library like DOMPurify or sanitize-html, or clearly document the limitations of the current implementation.
    - Files: fixtures/clean-code.ts
 
-3. ⚠️ **security**: Replace manual HTML sanitization with a well-tested library (DOMPurify or validator.js) to ensure all XSS vectors are properly handled across different encoding contexts.
+3. ⚠️ **security**: Improve email validation regex to reject invalid formats like 'a@b.c' or consider using a validation library like validator.js for more robust email validation.
    - Files: fixtures/clean-code.ts
 
-4. ⚠️ **testing**: Add unit tests for all validation branches in createUser function (missing email, missing name, invalid email format) to ensure proper error handling.
+4. ⚠️ **security**: Replace Math.random()-based ID generation with crypto.randomUUID() to prevent collisions in high-concurrency scenarios and improve security.
    - Files: fixtures/clean-code.ts
 
-5. ⚠️ **testing**: Add unit tests for isValidEmail, createUser, and saveUser functions to verify core business logic and prevent regressions.
+5. ⚠️ **testing**: Add tests for all validation branches including missing email, missing name, invalid email format, and null/undefined inputs to ensure API contract enforcement.
    - Files: fixtures/clean-code.ts
 
 ## 📁 File Details
 
 ### 📄 `fixtures/clean-code.ts`
 
-**Quality Score:** 82/100 | **Coverage:** ~0%
+**Quality Score:** 78/100 | **Coverage:** ~0%
 
-#### Issues (5)
-  - Line 39: `medium` Manual HTML entity encoding in sanitizeInput() may miss edge cases or encoding contexts (HTML attribute, JavaScript context, URL). The function only handles basic characters (<, >, ", ') but doesn't account for other XSS vectors or different encoding contexts.
-  - Line 81: `medium` generateId() uses Math.random() which is cryptographically weak and predictable. This can lead to ID enumeration attacks where attackers guess valid user IDs based on timing and patterns.
-  - Line 31: `low` The email validation regex /^[^\s@]+@[^\s@]+\.[^\s@]+$/ is overly simplistic and will accept invalid emails like 'a@b.c' or 'test@domain..com'. While not a security issue, it may lead to data quality problems.
-
-  *...and 2 more*
-
-#### Test Gaps (13)
-  - `isValidEmail (line 28)` (high priority)
-  - `isValidEmail (line 28)` (medium priority)
-
-  *...and 11 more*
-
-#### Refactoring Opportunities (6)
-  - **modernize**: Replace method chaining with a single replace using regex alternation and a lookup map for cleaner, more maintainable HTML entity encoding
-  - **extract-function**: Extract input validation logic into a dedicated validateUserInput function to separate concerns and improve testability
+#### Issues (7)
+  - Line 30: `medium` Email validation regex is too permissive and can be bypassed with invalid emails like 'a@b.c' or emails with special characters that may cause issues downstream. The regex /^[^\s@]+@[^\s@]+\.[^\s@]+$/ accepts invalid formats.
+  - Line 38: `medium` XSS sanitization is incomplete. The function only handles HTML entity encoding for basic characters (<, >, ", ') but doesn't protect against event handlers, javascript: URLs, or other XSS vectors. This creates a false sense of security.
+  - Line 79: `medium` The generateId() function uses Date.now() and Math.random() which can produce collisions in high-concurrency scenarios. Math.random() is not cryptographically secure and Date.now() has millisecond precision, making concurrent calls likely to generate the same timestamp.
 
   *...and 4 more*
 
+#### Test Gaps (14)
+  - `isValidEmail (lines 30-33)` (high priority)
+  - `sanitizeInput (lines 38-43)` (critical priority)
+
+  *...and 12 more*
+
+#### Refactoring Opportunities (5)
+  - **modernize**: Use a more comprehensive email validation regex or a standard library. The current regex is overly simplistic and will accept invalid emails like 'a@b.c'.
+  - **simplify**: Extract validation logic into a separate function to separate concerns and improve testability.
+
+  *...and 3 more*
+
 ---
 
-*Generated at 2026-11-09T21:30:58.218Z • Duration: 512.627ms*
+*Generated at 2026-11-10T08:53:30.369Z • Duration: 584.781ms*

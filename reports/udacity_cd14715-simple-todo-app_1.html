@@ -47,7 +47,7 @@
   
   <div class="summary">
     <div class="metric">
-      <div class="metric-value">82</div>
+      <div class="metric-value">78</div>
       <div class="metric-label">Overall Score</div>
     </div>
     <div class="metric">
@@ -59,11 +59,11 @@
       <div class="metric-label">Critical Issues</div>
     </div>
     <div class="metric">
-      <div class="metric-value">8</div>
+      <div class="metric-value">9</div>
       <div class="metric-label">Tests Needed</div>
     </div>
     <div class="metric">
-      <div class="metric-value">6</div>
+      <div class="metric-value">5</div>
       <div class="metric-label">Refactorings</div>
     </div>
   </div>
@@ -72,37 +72,37 @@
   <ul>
       <li class="rec-critical">
         <span class="priority">[CRITICAL]</span>
-        <strong>testing</strong>: Add comprehensive unit tests for the sanitizeInput function to verify XSS prevention. This function has zero test coverage and is critical for security.
+        <strong>testing</strong>: Add comprehensive test suite for security-critical functions sanitizeInput and createUser to verify XSS prevention and input validation works correctly across all edge cases.
         <br><small>Files: fixtures/clean-code.ts</small>
       </li>
     
       <li class="rec-high">
         <span class="priority">[HIGH]</span>
-        <strong>security</strong>: Replace Math.random() with crypto.randomUUID() in generateId() to prevent ID enumeration attacks and ensure cryptographically secure random generation.
+        <strong>security</strong>: Replace incomplete XSS sanitization with a well-tested library like DOMPurify or sanitize-html, or clearly document the limitations of the current implementation.
         <br><small>Files: fixtures/clean-code.ts</small>
       </li>
     
       <li class="rec-high">
         <span class="priority">[HIGH]</span>
-        <strong>security</strong>: Replace manual HTML sanitization with a well-tested library (DOMPurify or validator.js) to ensure all XSS vectors are properly handled across different encoding contexts.
+        <strong>security</strong>: Improve email validation regex to reject invalid formats like 'a@b.c' or consider using a validation library like validator.js for more robust email validation.
         <br><small>Files: fixtures/clean-code.ts</small>
       </li>
     
       <li class="rec-high">
         <span class="priority">[HIGH]</span>
-        <strong>testing</strong>: Add unit tests for all validation branches in createUser function (missing email, missing name, invalid email format) to ensure proper error handling.
+        <strong>security</strong>: Replace Math.random()-based ID generation with crypto.randomUUID() to prevent collisions in high-concurrency scenarios and improve security.
         <br><small>Files: fixtures/clean-code.ts</small>
       </li>
     
       <li class="rec-high">
         <span class="priority">[HIGH]</span>
-        <strong>testing</strong>: Add unit tests for isValidEmail, createUser, and saveUser functions to verify core business logic and prevent regressions.
+        <strong>testing</strong>: Add tests for all validation branches including missing email, missing name, invalid email format, and null/undefined inputs to ensure API contract enforcement.
         <br><small>Files: fixtures/clean-code.ts</small>
       </li>
     </ul>
 
   <footer>
-    Generated at 2026-11-09T21:30:58.218Z • Duration: 512.627ms
+    Generated at 2026-11-10T08:53:30.369Z • Duration: 584.781ms
   </footer>
 </body>
 </html>

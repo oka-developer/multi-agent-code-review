@@ -4,54 +4,54 @@
 
 | Metric | Value |
 |--------|-------|
-| **Overall Score** | 20/100 |
+| **Overall Score** | 25/100 |
 | **Files Reviewed** | 1 |
 | **Critical Issues** | 3 |
-| **High Priority Tests** | 16 |
+| **High Priority Tests** | 14 |
 | **Refactoring Opportunities** | 8 |
 
 ## 🎯 Top Recommendations
 
-1. 🚨 **security**: Immediately fix SQL injection vulnerabilities in searchTodos(), searchTodosByStatus(), and getTodosByUser() by replacing string interpolation with parameterized queries. These vulnerabilities allow attackers to execute arbitrary SQL commands, potentially destroying data or exfiltrating sensitive information.
+1. 🚨 **security**: Fix SQL injection vulnerabilities in searchTodos(), searchTodosByStatus(), and getTodosByUser() by replacing string concatenation/interpolation with parameterized queries. These vulnerabilities allow attackers to execute arbitrary SQL commands and compromise the entire database.
    - Files: src/todo.ts
 
-2. 🚨 **testing**: Create comprehensive security tests for the three vulnerable search functions to demonstrate the SQL injection exploits before fixing them, then verify the fixes prevent injection attacks. Test with payloads like "'; DROP TABLE todos; --" and "' OR '1'='1".
+2. 🚨 **testing**: Add comprehensive security tests for the three new search functions with malicious inputs (e.g., SQL injection payloads like "'; DROP TABLE todos; --") to verify parameterized queries are used and injection attacks are prevented.
    - Files: src/todo.ts
 
-3. 🚨 **testing**: Implement tests for sanitizeInput() XSS prevention with malicious payloads like '<script>alert("xss")</script>' and verify all HTML special characters are properly escaped.
+3. ⚠️ **security**: Replace weak ID generation using Math.random() and Date.now() with cryptographically secure alternatives (e.g., crypto.randomUUID() or crypto.randomBytes()) to prevent IDOR vulnerabilities through ID prediction.
    - Files: src/todo.ts
 
-4. ⚠️ **security**: Replace weak ID generation (Math.random() and Date.now()) with cryptographically secure randomUUID() from the crypto module to prevent ID prediction attacks.
+4. ⚠️ **testing**: Create unit tests for all core business logic functions (validateTodoInput, sanitizeInput, createTodo, getAllTodos, getTodoById, updateTodoStatus, deleteTodo) covering happy paths, edge cases, and error conditions. Current test coverage is 0%.
    - Files: src/todo.ts
 
-5. ⚠️ **testing**: Create test suite covering all 10 exported functions. Current test coverage is 0%. Priority functions include validateTodoInput (boundary conditions), createTodo (validation failures, XSS handling), and all CRUD operations.
+5. ⚠️ **maintainability**: Refactor database operations into a TodoRepository class and business logic into a TodoService class to enable dependency injection, improve testability, and follow separation of concerns principles.
    - Files: src/todo.ts
 
 ## 📁 File Details
 
 ### 📄 `src/todo.ts`
 
-**Quality Score:** 20/100 | **Coverage:** ~0%
+**Quality Score:** 25/100 | **Coverage:** ~0%
 
-#### Issues (15)
-  - Line 123: `critical` SQL injection vulnerability in searchTodos(). User-supplied keyword is directly interpolated into SQL query using template literals without any sanitization or parameterization. An attacker can inject arbitrary SQL by passing malicious input like `'; DROP TABLE todos; --`.
-  - Line 133: `critical` SQL injection vulnerability in searchTodosByStatus(). User input 'completed' is concatenated directly into SQL query using string concatenation. An attacker can pass malicious SQL like `1 OR 1=1; DROP TABLE todos; --` to execute arbitrary SQL commands.
-  - Line 143: `critical` SQL injection vulnerability in getTodosByUser(). The userId parameter is interpolated into SQL query using template literals without sanitization. An attacker can inject SQL by passing userId like `' OR '1'='1` to bypass authorization or exfiltrate data from other users.
+#### Issues (13)
+  - Line 119: `critical` SQL injection vulnerability: User-supplied 'keyword' is directly interpolated into the SQL query using template literals. An attacker can inject malicious SQL by providing input like "' OR '1'='1" or "'; DROP TABLE todos; --" to execute arbitrary SQL commands, potentially reading, modifying, or deleting all database data.
+  - Line 129: `critical` SQL injection vulnerability: User-supplied 'completed' parameter is concatenated directly into SQL without validation or parameterization. An attacker can inject SQL by passing input like "true; DROP TABLE todos; --" to execute arbitrary database commands and compromise the entire database.
+  - Line 138: `critical` SQL injection vulnerability: The 'userId' parameter is embedded directly in the SQL query using template literals without any sanitization. An attacker can provide input like "1' OR '1'='1" to bypass access controls and retrieve all todos, or use "1'; DELETE FROM todos; --" to delete data.
 
-  *...and 12 more*
+  *...and 10 more*
 
 #### Test Gaps (20)
-  - `searchTodos (line 120)` (critical priority)
-  - `searchTodosByStatus (line 129)` (critical priority)
+  - `searchTodos (line 123)` (critical priority)
+  - `searchTodosByStatus (line 132)` (critical priority)
 
   *...and 18 more*
 
 #### Refactoring Opportunities (8)
-  - **simplify**: Replace sequential if-return statements with early returns and combine validation logic to reduce nesting and improve readability.
-  - **modernize**: Replace chained string.replace calls with a configuration-driven approach using reduce or a mapping object for better maintainability.
+  - **extract-function**: Extract individual validation rules into separate, reusable validator functions that can be composed and unit-tested independently.
+  - **modernize**: Replace early-return pattern with a single expression using logical operators, making validation more declarative and easier to extend.
 
   *...and 6 more*
 
 ---
 
-*Generated at 2026-11-09T22:06:52.220Z • Duration: 550.737ms*
+*Generated at 2026-11-10T09:00:35.549Z • Duration: 414.12ms*

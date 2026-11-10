@@ -47,7 +47,7 @@
   
   <div class="summary">
     <div class="metric">
-      <div class="metric-value">20</div>
+      <div class="metric-value">25</div>
       <div class="metric-label">Overall Score</div>
     </div>
     <div class="metric">
@@ -59,7 +59,7 @@
       <div class="metric-label">Critical Issues</div>
     </div>
     <div class="metric">
-      <div class="metric-value">16</div>
+      <div class="metric-value">14</div>
       <div class="metric-label">Tests Needed</div>
     </div>
     <div class="metric">
@@ -72,37 +72,37 @@
   <ul>
       <li class="rec-critical">
         <span class="priority">[CRITICAL]</span>
-        <strong>security</strong>: Immediately fix SQL injection vulnerabilities in searchTodos(), searchTodosByStatus(), and getTodosByUser() by replacing string interpolation with parameterized queries. These vulnerabilities allow attackers to execute arbitrary SQL commands, potentially destroying data or exfiltrating sensitive information.
+        <strong>security</strong>: Fix SQL injection vulnerabilities in searchTodos(), searchTodosByStatus(), and getTodosByUser() by replacing string concatenation/interpolation with parameterized queries. These vulnerabilities allow attackers to execute arbitrary SQL commands and compromise the entire database.
         <br><small>Files: src/todo.ts</small>
       </li>
     
       <li class="rec-critical">
         <span class="priority">[CRITICAL]</span>
-        <strong>testing</strong>: Create comprehensive security tests for the three vulnerable search functions to demonstrate the SQL injection exploits before fixing them, then verify the fixes prevent injection attacks. Test with payloads like "'; DROP TABLE todos; --" and "' OR '1'='1".
-        <br><small>Files: src/todo.ts</small>
-      </li>
-    
-      <li class="rec-critical">
-        <span class="priority">[CRITICAL]</span>
-        <strong>testing</strong>: Implement tests for sanitizeInput() XSS prevention with malicious payloads like '<script>alert("xss")</script>' and verify all HTML special characters are properly escaped.
+        <strong>testing</strong>: Add comprehensive security tests for the three new search functions with malicious inputs (e.g., SQL injection payloads like "'; DROP TABLE todos; --") to verify parameterized queries are used and injection attacks are prevented.
         <br><small>Files: src/todo.ts</small>
       </li>
     
       <li class="rec-high">
         <span class="priority">[HIGH]</span>
-        <strong>security</strong>: Replace weak ID generation (Math.random() and Date.now()) with cryptographically secure randomUUID() from the crypto module to prevent ID prediction attacks.
+        <strong>security</strong>: Replace weak ID generation using Math.random() and Date.now() with cryptographically secure alternatives (e.g., crypto.randomUUID() or crypto.randomBytes()) to prevent IDOR vulnerabilities through ID prediction.
         <br><small>Files: src/todo.ts</small>
       </li>
     
       <li class="rec-high">
         <span class="priority">[HIGH]</span>
-        <strong>testing</strong>: Create test suite covering all 10 exported functions. Current test coverage is 0%. Priority functions include validateTodoInput (boundary conditions), createTodo (validation failures, XSS handling), and all CRUD operations.
+        <strong>testing</strong>: Create unit tests for all core business logic functions (validateTodoInput, sanitizeInput, createTodo, getAllTodos, getTodoById, updateTodoStatus, deleteTodo) covering happy paths, edge cases, and error conditions. Current test coverage is 0%.
+        <br><small>Files: src/todo.ts</small>
+      </li>
+    
+      <li class="rec-high">
+        <span class="priority">[HIGH]</span>
+        <strong>maintainability</strong>: Refactor database operations into a TodoRepository class and business logic into a TodoService class to enable dependency injection, improve testability, and follow separation of concerns principles.
         <br><small>Files: src/todo.ts</small>
       </li>
     </ul>
 
   <footer>
-    Generated at 2026-11-09T22:06:52.220Z • Duration: 550.737ms
+    Generated at 2026-11-10T09:00:35.549Z • Duration: 414.12ms
   </footer>
 </body>
 </html>
